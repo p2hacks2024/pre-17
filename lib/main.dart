@@ -5,7 +5,7 @@ void main() {
   runApp(const MyApp());
 }
 
-double ratio = 0.5;
+double ratio = 0.8; //ジョッキに入っているアルコール量(max:1.0)
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -74,12 +74,42 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    List<Widget> scaleLine() {
+      List<Widget> widgets = [];
+      for (int i = 0; i < 10; i++) {
+        if (i % 5 == 0) {
+          widgets.add(
+            Positioned(
+              top: 350 * (i / 10),
+              left: 30,
+              child: Container(
+                height: 5,
+                width: 50,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 255, 74, 74),
+                ),
+              ),
+            ),
+          );
+        } else {
+          widgets.add(
+            Positioned(
+              top: 350 * (i / 10),
+              left: 30,
+              child: Container(
+                height: 5,
+                width: 20,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 255, 74, 74),
+                ),
+              ),
+            ),
+          );
+        }
+      }
+      return widgets;
+    }
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 188, 149),
       body: Center(
@@ -87,25 +117,28 @@ class _MyHomePageState extends State<MyHomePage> {
           alignment: Alignment.center,
           children: [
             Container(
-              height: 350,
+              height: 355,
               width: 210,
-              // alignment: Alignment.center,
+              alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: Color.fromARGB(255, 199, 248, 255),
               ),
             ),
             Positioned(
-              top: 225,
+              top: 350 * (1 - ratio),
               left: 5,
               child: Container(
-                height: 120,
+                height: 350 * ratio,
                 width: 200,
+
                 // alignment: Alignment.center,
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
                   color: Color.fromARGB(255, 255, 183, 39),
                 ),
               ),
-            )
+            ),
+            ...scaleLine(),
           ],
         ),
       ),

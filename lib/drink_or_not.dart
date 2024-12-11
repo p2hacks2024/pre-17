@@ -65,26 +65,32 @@ class DrinkOrNot extends StatelessWidget {
                         debugPrint('まだ飲む pressed');
                       },
                       style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 241, 236, 236),
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 20),
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero, // 四角形のボタン
                         ),
                       ),
-                      child: const Text('まだ飲む'),
+                      child: const Text('まだ飲む',
+                          style: TextStyle(color: Colors.black)),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         debugPrint('水を飲む pressed');
                       },
                       style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 255, 255),
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 20),
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero, // 四角形のボタン
                         ),
                       ),
-                      child: const Text('お水を飲む'),
+                      child: const Text('お水を飲む',
+                          style: TextStyle(color: Colors.black)),
                     ),
                   ],
                 ),

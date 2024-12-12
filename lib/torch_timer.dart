@@ -4,6 +4,7 @@ import 'package:torch_light/torch_light.dart';
 
 class TorchTimer {
   Timer? _timer;
+  bool _isTorchOn = false;
 
   Future<void> start(BuildContext context) async {
     // トーチが利用可能かチェック
@@ -11,7 +12,7 @@ class TorchTimer {
 
     // 30分ごとに繰り返すタイマーを設定
     _timer = Timer.periodic(const Duration(minutes: 30), (Timer timer) async {
-      await _toggleFlashlight();
+      await toggleFlashlight(); // ライトのオンオフを切り替える
     });
   }
 
@@ -30,18 +31,17 @@ class TorchTimer {
     }
   }
 
-  Future<void> _toggleFlashlight() async {
+  Future<void> toggleFlashlight() async {
     try {
-      // トーチライトを点灯
-      await TorchLight.enableTorch();
-    } catch (e) {
-      // エラーが発生した場合にログ出力
-      print('Torch error: $e');
-    }
-    await Future.delayed(const Duration(seconds: 5)); // 5秒間点灯
-    // トーチライトを消灯
-    try {
-      await TorchLight.disableTorch();
+      if (_isTorchOn) {
+        // トーチライトをオフ
+        await TorchLight.disableTorch();
+        _isTorchOn = false;
+      } else {
+        // トーチライトをオン
+        await TorchLight.enableTorch();
+        _isTorchOn = true;
+      }
     } catch (e) {
       // エラーが発生した場合にログ出力
       print('Torch error: $e');

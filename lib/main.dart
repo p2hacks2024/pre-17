@@ -36,17 +36,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TorchTimer _torchTimer = TorchTimer(); // インスタンスを作成
+  bool _isTorchOn = false; // トーチの状態をUIで反映
 
   @override
   void initState() {
     super.initState();
-    _torchTimer.start(); // タイマーを開始
+    // WidgetsBindingを使用してcontextを渡す
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _torchTimer.start(context); // contextを渡してトーチを開始
+    });
   }
 
   @override
   void dispose() {
     _torchTimer.stop(); // タイマーを停止
     super.dispose();
+  }
+
+  Future<void> _toggleTorch() async {
+    await _torchTimer.toggleFlashlight();
+    setState(() {
+      _isTorchOn = !_isTorchOn; // トーチの状態をUIに反映
+    });
   }
 
   int _counter = 0;
@@ -84,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Color.fromARGB(255, 255, 183, 39),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

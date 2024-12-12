@@ -65,8 +65,9 @@ class DrinkOrNot extends StatelessWidget {
                         debugPrint('まだ飲む pressed');
                       },
                       style: ElevatedButton.styleFrom(
+                        elevation: 1,
                         backgroundColor:
-                            const Color.fromARGB(255, 241, 236, 236),
+                            const Color.fromARGB(255, 241, 237, 237),
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 20),
                         shape: const RoundedRectangleBorder(
@@ -81,8 +82,9 @@ class DrinkOrNot extends StatelessWidget {
                         debugPrint('水を飲む pressed');
                       },
                       style: ElevatedButton.styleFrom(
+                        elevation: 10,
                         backgroundColor:
-                            const Color.fromARGB(255, 255, 255, 255),
+                            const Color.fromARGB(255, 244, 253, 255),
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 20),
                         shape: const RoundedRectangleBorder(

@@ -99,33 +99,76 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 188, 149),
       body: Center(
-        child: Stack(
-          alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-              height: 355,
-              width: 210,
+            Stack(
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 199, 248, 255),
-              ),
-            ),
-            Positioned(
-              top: 350 * (1 - ratio),
-              left: 5,
-              child: Container(
-                height: 350 * ratio,
-                width: 200,
-
-                // alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Color.fromARGB(255, 255, 183, 39),
+              children: [
+                Container(
+                  height: 355,
+                  width: 210,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 199, 248, 255),
+                  ),
                 ),
+                Positioned(
+                  top: 350 * (1 - ratio),
+                  left: 5,
+                  child: Container(
+                    height: 350 * ratio,
+                    width: 200,
+
+                    // alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color.fromARGB(255, 255, 183, 39),
+                    ),
+                  ),
+                ),
+                ...scaleLine(),
+              ],
+            ),
+            Container(
+              height: 70,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      ratio += (0.7 / 3);
+                      print('ボタンがタップされました！'); //押したときの処理を書く
+                    },
+                    child: Image.asset('assets/beer.png'),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      print('ボタンがタップされました！'); //押したときの処理を書く
+
+                      ratio += (0.6 / 3);
+                    },
+                    child: Image.asset('assets/PlumLiqueur.png'),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      print('ボタンがタップされました！'); //押したときの処理を書く
+                      ratio += (1 / 3);
+                    },
+                    child: Image.asset('assets/whiskey.png'),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      print('ボタンがタップされました！'); //押したときの処理を書く
+                      ratio -= 0.1;
+                    },
+                    child: Image.asset('assets/00c021eee9d4be95.png'),
+                  ),
+                ],
               ),
             ),
-            ...scaleLine(),
-            Text(test.toString()),
           ],
         ),
       ),

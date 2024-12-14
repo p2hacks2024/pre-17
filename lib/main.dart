@@ -35,7 +35,7 @@ class MainPage extends ConsumerWidget {
 
     void lightCountStart() {
       if (ref.read(torchControllerProvider).isScheduled != true) {
-        torchController.startSchedule(context, 10);
+        torchController.startSchedule(context, 1800);
       }
     }
 

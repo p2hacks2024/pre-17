@@ -58,7 +58,7 @@ class TorchControllerNotifier extends StateNotifier<TorchState> {
           await disableTorch(context);
 
           _showTimeUpDialog(context);
-          resetSchedule(context, 10);
+          resetSchedule(context, 1800);
         } else {
           state = state.setTorch(remainingSeconds: newSeconds);
         }

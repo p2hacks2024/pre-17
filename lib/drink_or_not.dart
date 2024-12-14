@@ -77,7 +77,7 @@ class DrinkOrNot extends ConsumerWidget {
                         ref.watch(alcoholRatioProvider.notifier).add(-0.1);
                         ref
                             .watch(torchControllerProvider.notifier)
-                            .startSchedule(context, 10);
+                            .startSchedule(context, 1800);
 
                         Navigator.pop(context);
                       },

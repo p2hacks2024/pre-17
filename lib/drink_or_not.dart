@@ -14,6 +14,7 @@ class DrinkOrNot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 255, 188, 149),
       appBar: AppBar(
         title: const Text('Drink or Not'),
       ),
@@ -24,7 +25,7 @@ class DrinkOrNot extends StatelessWidget {
             width: 400, // レイアウト全体の幅を設定
             padding: const EdgeInsets.all(20.0), // コンテナ内の余白
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color.fromRGBO(255, 242, 229, 1),
               borderRadius: BorderRadius.circular(10), // 少し角を丸める
               boxShadow: [
                 BoxShadow(
@@ -65,8 +66,9 @@ class DrinkOrNot extends StatelessWidget {
                         debugPrint('まだ飲む pressed');
                       },
                       style: ElevatedButton.styleFrom(
+                        elevation: 1,
                         backgroundColor:
-                            const Color.fromARGB(255, 241, 236, 236),
+                            const Color.fromARGB(255, 241, 237, 237),
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 20),
                         shape: const RoundedRectangleBorder(
@@ -81,8 +83,9 @@ class DrinkOrNot extends StatelessWidget {
                         debugPrint('水を飲む pressed');
                       },
                       style: ElevatedButton.styleFrom(
+                        elevation: 10,
                         backgroundColor:
-                            const Color.fromARGB(255, 255, 255, 255),
+                            const Color.fromARGB(255, 243, 251, 251),
                         padding: const EdgeInsets.symmetric(
                             vertical: 15, horizontal: 20),
                         shape: const RoundedRectangleBorder(

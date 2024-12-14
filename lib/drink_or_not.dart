@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:no_name/controller/main_controller.dart';
 
-void main() {
-  runApp(MaterialApp(
-    home: DrinkOrNot(),
-  ));
-}
+class DrinkOrNot extends ConsumerWidget {
+  const DrinkOrNot({super.key});
 
-class DrinkOrNot extends StatelessWidget {
-  DrinkOrNot({super.key});
-
-  final TextEditingController controller = TextEditingController();
+  //final TextEditingController controller = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 255, 188, 149),
       appBar: AppBar(
-        title: const Text('Drink or Not'),
+        title: const Text('お水 <飲んでほしいな'),
       ),
       body: Center(
         child: Padding(
@@ -63,7 +59,7 @@ class DrinkOrNot extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        debugPrint('まだ飲む pressed');
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         elevation: 1,
@@ -80,7 +76,8 @@ class DrinkOrNot extends StatelessWidget {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        debugPrint('水を飲む pressed');
+                        ref.read(alcoholRatioProvider.notifier).add(-0.1);
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         elevation: 10,

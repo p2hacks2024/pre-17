@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
 // import 'package:flutter/services.dart' show rootBundle;
+import 'package:no_name/drink_or_not.dart';
 import 'package:no_name/controller/main_controller.dart';
 
 void main() {
@@ -89,6 +90,14 @@ class MainPage extends ConsumerWidget {
       return widgets;
     }
 
+    void drink(double content) {
+      ref.read(alcoholRatioProvider.notifier).add(content);
+      if (ref.watch(alcoholRatioProvider) >= 0.75) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => DrinkOrNot()));
+      }
+    }
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 188, 149),
       body: Center(
@@ -132,19 +141,19 @@ class MainPage extends ConsumerWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      ref.read(alcoholRatioProvider.notifier).add(0.7 / 3);
+                      drink(0.7 / 3);
                     },
                     child: Image.asset('assets/beer.png'),
                   ),
                   InkWell(
                     onTap: () {
-                      ref.read(alcoholRatioProvider.notifier).add(0.6 / 3);
+                      drink(0.6 / 3);
                     },
                     child: Image.asset('assets/PlumLiqueur.png'),
                   ),
                   InkWell(
                     onTap: () {
-                      ref.read(alcoholRatioProvider.notifier).add(1 / 3);
+                      drink(1 / 3);
                     },
                     child: Image.asset('assets/whiskey.png'),
                   ),

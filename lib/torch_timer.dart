@@ -1,142 +1,129 @@
 import 'package:flutter/material.dart';
 import 'package:torch_light/torch_light.dart';
 import 'dart:async';
+import 'package:no_name/controller/main_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-void main() {
-  runApp(TorchApp());
-}
+class TorchState {
+  final bool isScheduled;
+  final bool isDialogShowing;
+  final int remainingSeconds;
 
-class TorchApp extends StatefulWidget {
-  @override
-  _TorchAppState createState() => _TorchAppState();
-}
+  const TorchState({
+    this.isScheduled = false,
+    this.isDialogShowing = false,
+    this.remainingSeconds = 0,
+  });
 
-class _TorchAppState extends State<TorchApp> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: TorchController(),
+  TorchState setTorch({
+    bool? isScheduled,
+    bool? isDialogShowing,
+    int? remainingSeconds,
+  }) {
+    return TorchState(
+      isScheduled: isScheduled ?? this.isScheduled,
+      isDialogShowing: isDialogShowing ?? this.isDialogShowing,
+      remainingSeconds: remainingSeconds ?? this.remainingSeconds,
     );
   }
 }
 
-class TorchController extends StatefulWidget {
-  @override
-  _TorchControllerState createState() => _TorchControllerState();
-}
+class TorchControllerNotifier extends StateNotifier<TorchState> {
+  TorchControllerNotifier() : super(const TorchState());
 
-class _TorchControllerState extends State<TorchController> {
-  Timer? _timer; // 次の点灯スケジュール用のタイマー
-  bool _isScheduled = false; // スケジュールが開始されているかどうか
+  Timer? _timer;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Torch Scheduler App'),
-      ),
-      body: FutureBuilder<bool>(
-        future: _isTorchAvailable(context),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (snapshot.hasData && snapshot.data!) {
-            return Center(
-              child: ElevatedButton(
-                child: Text(_isScheduled ? 'Stop Schedule' : 'Start Schedule'),
-                onPressed: () {
-                  if (_isScheduled) {
-                    _stopSchedule();
-                  } else {
-                    _startSchedule();
-                  }
-                },
-              ),
-            );
-          } else if (snapshot.hasData) {
-            return const Center(
-              child: Text('No torch available.'),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
-    );
-  }
-
-  Future<bool> _isTorchAvailable(BuildContext context) async {
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-
-    try {
-      return await TorchLight.isTorchAvailable();
-    } on Exception catch (_) {
-      scaffoldMessenger.showSnackBar(
-        const SnackBar(
-          content: Text('Could not check if the device has an available torch'),
-        ),
-      );
-      return false;
-    }
-  }
-
-  void _startSchedule() {
-    setState(() {
-      _isScheduled = true;
-    });
-
-    // 最初の30分待機と以降のループを開始
-    _scheduleNextLight();
-  }
-
-  void _scheduleNextLight() {
-    _timer = Timer(Duration(seconds: 10), () async {
-      await _enableTorch();
-      await Future.delayed(Duration(seconds: 5));
-      await _disableTorch();
-
-      // 次のスケジュールをセット
-      if (_isScheduled) {
-        _scheduleNextLight();
-      }
-    });
-  }
-
-  void _stopSchedule() {
+  void startSchedule(BuildContext context, int seconds) {
     _timer?.cancel();
-    _timer = null;
-    setState(() {
-      _isScheduled = false;
-    });
+    state = state.setTorch(
+      isScheduled: true,
+      remainingSeconds: seconds,
+    );
+
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) async {
+        final newSeconds = state.remainingSeconds - 1;
+
+        if (newSeconds <= 0) {
+          timer.cancel();
+          state = state.setTorch(
+            isScheduled: false,
+            remainingSeconds: 0,
+          );
+          await enableTorch(context);
+          await warmDialog(context, '警告 : 水を飲んでください', '最後に水を飲んでから30分が経過しました');
+
+          await Future.delayed(const Duration(seconds: 5)); //光らせる秒数
+          await disableTorch(context);
+
+          _showTimeUpDialog(context);
+          resetSchedule(context, 10);
+        } else {
+          state = state.setTorch(remainingSeconds: newSeconds);
+        }
+      },
+    );
   }
 
-  Future<void> _enableTorch() async {
-    try {
-      await TorchLight.enableTorch();
-    } on Exception catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not enable torch'),
-        ),
-      );
-    }
+  void resetSchedule(BuildContext context, int seconds) {
+    startSchedule(context, seconds);
   }
 
-  Future<void> _disableTorch() async {
-    try {
-      await TorchLight.disableTorch();
-    } on Exception catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not disable torch'),
-        ),
-      );
-    }
+  void _showTimeUpDialog(BuildContext context) {}
+
+  void setDialogShowing(bool showing) {
+    state = state.setTorch(isDialogShowing: showing);
   }
 
   @override
   void dispose() {
-    _stopSchedule(); // アプリ終了時にタイマーを停止
+    _timer?.cancel();
     super.dispose();
   }
+
+  Future<void> warmDialog(
+      BuildContext context, String title, String content) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> enableTorch(context) async {
+    try {
+      await TorchLight.enableTorch();
+    } on Exception catch (e) {
+      warmDialog(context!, '例外が発生しました', e.toString());
+    }
+  }
+
+  Future<void> disableTorch(context) async {
+    try {
+      await TorchLight.disableTorch();
+    } on Exception catch (e) {
+      warmDialog(context!, '例外が発生しました', e.toString());
+    }
+  }
 }
+
+// Provider定義
+final torchControllerProvider =
+    StateNotifierProvider.autoDispose<TorchControllerNotifier, TorchState>(
+        (ref) {
+  return TorchControllerNotifier();
+});

@@ -1,9 +1,6 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:io';
-// import 'package:flutter/services.dart' show rootBundle;
 import 'package:no_name/drink_or_not.dart';
+import 'package:no_name/torch_timer.dart';
 import 'package:no_name/controller/main_controller.dart';
 
 void main() {
@@ -22,36 +19,25 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MainPage(),
+      home: const MainPage(),
     );
   }
 }
 
 class MainPage extends ConsumerWidget {
-  List<List<String>> csvImport() {
-    List<List<String>> importList = [];
-
-    try {
-      final String csvString =
-          File('assets/alcohol_content.csv').readAsStringSync();
-
-      List<String> csvLines = const LineSplitter().convert(csvString);
-      for (String line in csvLines) {
-        importList.add(line.split(','));
-      }
-
-      print(importList);
-    } catch (e) {
-      importList.add(e.toString().split(','));
-    }
-    return importList;
-  }
+  const MainPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final test = csvImport();
-    double ratio = ref.watch(alcoholRatioProvider);
-    //ジョッキに入っているアルコール量(max:1.0)
+    ref.watch(alcoholRatioProvider); //ジョッキに入っているアルコール量(max:1.0)
+    ref.watch(torchControllerProvider);
+    final torchController = ref.watch(torchControllerProvider.notifier);
+
+    void lightCountStart() {
+      if (ref.read(torchControllerProvider).isScheduled != true) {
+        torchController.startSchedule(context, 10);
+      }
+    }
 
     //目盛り
     List<Widget> scaleLine() {
@@ -91,11 +77,18 @@ class MainPage extends ConsumerWidget {
     }
 
     void drink(double content) {
+      lightCountStart();
       ref.read(alcoholRatioProvider.notifier).add(content);
       if (ref.watch(alcoholRatioProvider) >= 0.75) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => DrinkOrNot()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const DrinkOrNot()));
       }
+    }
+
+    void drinkWater(double content) {
+      ref.read(alcoholRatioProvider.notifier).add(content);
+
+      ref.watch(torchControllerProvider.notifier).startSchedule(context, 10);
     }
 
     return Scaffold(
@@ -133,7 +126,7 @@ class MainPage extends ConsumerWidget {
                 ...scaleLine(),
               ],
             ),
-            Container(
+            SizedBox(
               height: 70,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -159,7 +152,7 @@ class MainPage extends ConsumerWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      ref.read(alcoholRatioProvider.notifier).add(-0.1);
+                      drinkWater(-0.1);
                     },
                     child: Image.asset('assets/00c021eee9d4be95.png'),
                   ),

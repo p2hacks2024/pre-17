@@ -1,16 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:no_name/controller/main_controller.dart';
+import 'package:no_name/torch_timer.dart';
 
 class DrinkOrNot extends ConsumerWidget {
   const DrinkOrNot({super.key});
 
-  //final TextEditingController controller = TextEditingController();
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 255, 188, 149),
+      backgroundColor: const Color.fromARGB(255, 255, 188, 149),
       appBar: AppBar(
         title: const Text('お水 <飲んでほしいな'),
       ),
@@ -76,7 +74,11 @@ class DrinkOrNot extends ConsumerWidget {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        ref.read(alcoholRatioProvider.notifier).add(-0.1);
+                        ref.watch(alcoholRatioProvider.notifier).add(-0.1);
+                        ref
+                            .watch(torchControllerProvider.notifier)
+                            .startSchedule(context, 10);
+
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(

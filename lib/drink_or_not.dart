@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:no_name/controller/main_controller.dart';
-import 'package:no_name/torch_timer.dart';
+import 'package:callaco/controller/main_controller.dart';
+import 'package:callaco/torch_timer.dart';
 
 class DrinkOrNot extends ConsumerWidget {
   const DrinkOrNot({super.key});

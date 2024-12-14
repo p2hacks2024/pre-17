@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:torch_light/torch_light.dart';
 import 'dart:async';
-import 'package:no_name/controller/main_controller.dart';
+import 'package:callaco/controller/main_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TorchState {

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:no_name/drink_or_not.dart';
-import 'package:no_name/torch_timer.dart';
-import 'package:no_name/controller/main_controller.dart';
+import 'package:callaco/drink_or_not.dart';
+import 'package:callaco/torch_timer.dart';
+import 'package:callaco/controller/main_controller.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));

@@ -2,13 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io';
-import 'package:flutter/services.dart' show rootBundle;
+// import 'package:flutter/services.dart' show rootBundle;
+import 'package:no_name/controller/main_controller.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
-
-double ratio = 0.0; //ジョッキに入っているアルコール量(max:1.0)
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -22,21 +21,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MainPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class MainPage extends ConsumerWidget {
   List<List<String>> csvImport() {
     List<List<String>> importList = [];
 
@@ -44,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       final String csvString =
           File('assets/alcohol_content.csv').readAsStringSync();
 
-      List<String> csvLines = LineSplitter().convert(csvString);
+      List<String> csvLines = const LineSplitter().convert(csvString);
       for (String line in csvLines) {
         importList.add(line.split(','));
       }
@@ -57,8 +47,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final test = csvImport();
+  Widget build(BuildContext context, WidgetRef ref) {
+    //final test = csvImport();
+    double ratio = ref.watch(alcoholRatioProvider);
+    //ジョッキに入っているアルコール量(max:1.0)
+
     //目盛り
     List<Widget> scaleLine() {
       List<Widget> widgets = [];
@@ -71,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                 height: 5,
                 width: 50,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 255, 74, 74),
                 ),
               ),
@@ -85,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                 height: 5,
                 width: 20,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color.fromARGB(255, 255, 74, 74),
                 ),
               ),
@@ -110,21 +103,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 355,
                   width: 210,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color.fromARGB(255, 199, 248, 255),
                   ),
                 ),
                 Positioned(
-                  top: 350 * (1 - ratio),
+                  top: 350 * (1 - ref.watch(alcoholRatioProvider)),
                   left: 5,
                   child: Container(
-                    height: 350 * ratio,
+                    height: 350 * ref.watch(alcoholRatioProvider),
                     width: 200,
 
                     // alignment: Alignment.center,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Color.fromARGB(255, 255, 183, 39),
+                      color: const Color.fromARGB(255, 255, 183, 39),
                     ),
                   ),
                 ),
@@ -139,30 +132,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   InkWell(
                     onTap: () {
-                      ratio += (0.7 / 3);
-                      print('ボタンがタップされました！'); //押したときの処理を書く
+                      ref.read(alcoholRatioProvider.notifier).add(0.7 / 3);
                     },
                     child: Image.asset('assets/beer.png'),
                   ),
                   InkWell(
                     onTap: () {
-                      print('ボタンがタップされました！'); //押したときの処理を書く
-
-                      ratio += (0.6 / 3);
+                      ref.read(alcoholRatioProvider.notifier).add(0.6 / 3);
                     },
                     child: Image.asset('assets/PlumLiqueur.png'),
                   ),
                   InkWell(
                     onTap: () {
-                      print('ボタンがタップされました！'); //押したときの処理を書く
-                      ratio += (1 / 3);
+                      ref.read(alcoholRatioProvider.notifier).add(1 / 3);
                     },
                     child: Image.asset('assets/whiskey.png'),
                   ),
                   InkWell(
                     onTap: () {
-                      print('ボタンがタップされました！'); //押したときの処理を書く
-                      ratio -= 0.1;
+                      ref.read(alcoholRatioProvider.notifier).add(-0.1);
                     },
                     child: Image.asset('assets/00c021eee9d4be95.png'),
                   ),

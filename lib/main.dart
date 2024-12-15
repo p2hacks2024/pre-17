@@ -39,6 +39,28 @@ class MainPage extends ConsumerWidget {
       }
     }
 
+    Future<void> warmDialog(
+        BuildContext context, String title, String content) async {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     //目盛り
     List<Widget> scaleLine() {
       List<Widget> widgets = [];
@@ -79,9 +101,13 @@ class MainPage extends ConsumerWidget {
     void drink(double content) {
       lightCountStart();
       ref.read(alcoholRatioProvider.notifier).add(content);
-      if (ref.watch(alcoholRatioProvider) >= 0.75) {
+      if (ref.watch(alcoholRatioProvider) >= 0.75 &&
+          ref.watch(alcoholRatioProvider) < 1.0) {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const DrinkOrNot()));
+      } else if (ref.watch(alcoholRatioProvider) >= 1.0) {
+        warmDialog(
+            context, '最終警告 :目盛りが満タンになりました', '水を飲んで安静にしてください\n明日後悔することになりますよ');
       }
     }
 

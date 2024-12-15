@@ -88,7 +88,7 @@ class MainPage extends ConsumerWidget {
     void drinkWater(double content) {
       ref.read(alcoholRatioProvider.notifier).add(content);
 
-      ref.watch(torchControllerProvider.notifier).startSchedule(context, 10);
+      ref.watch(torchControllerProvider.notifier).startSchedule(context, 1800);
     }
 
     return Scaffold(

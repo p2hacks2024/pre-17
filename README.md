@@ -2,7 +2,6 @@
 
 ### プロダクト名  
 #### Callaco
-![image](https://github.com/user-attachments/assets/ac7846db-28a1-4238-b363-0fb1eb0a9cb2)
 
 ### コンセプト  
 - 二十歳になったばかりで、お酒を飲み始め自分のアルコール摂取できるキャパがわからない人に向けて、お酒の飲み過ぎを防ぐアプリ。
